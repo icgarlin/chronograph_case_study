@@ -105,7 +105,7 @@ const getIdKeys = (reports, documents, pages) => {
 }
 
 // O(n^2)
-const pagesPerReportOptimized = (store) => {
+const pagesPerReport = (store) => {
     const { report, document, page } = store; 
     const { reportIds, docIds, pageIds } = getIdKeys(report,document,page);
 
@@ -130,7 +130,7 @@ const pagesPerReportOptimized = (store) => {
 }
 
 
-console.log('Optimized ', pagesPerReportOptimized(store));
+console.log('Pages Per Report , ', pagesPerReport(store));
 
 
 // Assumes we are returning the reports of all matches
