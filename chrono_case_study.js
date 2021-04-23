@@ -145,42 +145,57 @@ console.log('Pages Per Report , ', pagesPerReport(store));
 const search = (searchString, store) => {
     const { report, document, page } = store; 
     const { docIds, pageIds, reportIds } = getIdKeys(report,document,page);
-    const reportIdList = [];
-    const docReportIds = [];
-    const pageDocIds = []; 
-    const pageReportIds = []; 
-
-    reportIds.map((id) => {
+    // Searches report titles 
+    const reportIdList = reportIds.filter((id) => {
       const title = report[id]['title']; 
-      if (title.includes(searchString)) {
-            reportIdList.push(id);  
-      } 
-    }); 
-    docIds.map((id) => {
-        const name = document[id]['name']; 
-        if (name.includes(searchString)) {
-          docReportIds.push(document[id].report_id);  
-        }
-    });
-    pageIds.map((id) => {
+      return title.includes(searchString); 
+    })
+
+    // Searches document names 
+    const docReportIds = docIds.map((id) => {
+      const name = document[id]['name']; 
+      if (name.includes(searchString)) {
+        return document[id].report_id;  
+      }
+    }).filter((id) => id !== undefined); 
+
+    // Searches page body and footnote
+    const pageReportIds = pageIds.map((id) => {
       const body = page[id]['body']; 
       const footnote = page[id]['footnote'];  
-      if (body.includes(searchString)
-            || (footnote !== null && footnote.includes(searchString))) {
-            pageDocIds.push(page[id].document_id); 
+      if (body.includes(searchString) || (footnote !== null && footnote.includes(searchString))) {
+        return page[id].document_id; 
       }
-    })
-    pageDocIds.map((id) => {
-        pageReportIds.push(document[id].report_id); 
-    })
-    const allReportIds = [...reportIdList, ...docReportIds, ...pageReportIds]; 
-    const _reports = []; 
-    allReportIds.map((id) => {
-       _reports.push(reports[id]); 
+    }).map((id) => {
+      if (id !== undefined) {
+       return document[id].report_id
+      } 
+    }).filter((id) => id !== undefined); 
+    
+
+    let allReportIds = []; 
+    if (reportIdList.length && docReportIds.length && pageReportIds.length) { 
+      allReportIds = [...reportIdList, ...docReportIds, ...pageReportIds]; 
+    } else if (reportIdList.length && docReportIds.length) {
+      allReportIds = [...reportIdList, ...docReportIds]; 
+    } else if (reportIdList.length && pageReportIds.length) {
+      allReportIds = [...reportIdList, ...docReportIds]; 
+    } else if (docReportIds.length && pageReportIds.length) {
+      allReportIds = [...docReportIds, ...pageReportIds]; 
+    } else if (reportIdList.length) {
+        allReportIds = [...reportIdList]; 
+    } else if (docReportIds.length) {
+        allReportIds = [...docReportIds]; 
+    } else if (pageReportIds.length) {
+      allReportIds = [...pageReportIds]; 
+    }
+
+    const _reports = allReportIds.map((id) => {
+      return report[id]; 
     })
     return _reports; 
 }
-console.log(`Search function... `, search(`Nothing`, store)); 
+console.log(`Search function... `, search(`Lorem`, store)); 
 
 // Function returns a Promise 
 const asyncSearch = async (searchString) => {
