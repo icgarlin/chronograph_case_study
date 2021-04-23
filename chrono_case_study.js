@@ -139,6 +139,8 @@ console.log('Pages Per Report , ', pagesPerReport(store));
 // the report related to the document if a document 
 // has the matching string and the report related 
 // to the page if the page has a matching string
+// Potential changes would be to return the list of related reports 
+// as soon as a match is found in reports, documents, or pages 
 // O(n) 
 const search = (searchString, store) => {
     const { report, document, page } = store; 
@@ -149,7 +151,7 @@ const search = (searchString, store) => {
     const pageReportIds = []; 
 
     reportIds.map((id) => {
-      const title = reports[id]['title']; 
+      const title = report[id]['title']; 
       if (title.includes(searchString)) {
             reportIdList.push(id);  
       } 
@@ -157,19 +159,19 @@ const search = (searchString, store) => {
     docIds.map((id) => {
         const name = documents[id]['name']; 
         if (name.includes(searchString)) {
-          docReportIds.push(documents[id].report_id);  
+          docReportIds.push(document[id].report_id);  
         }
     });
     pageIds.map((id) => {
-      const body = pages[id]['body']; 
-      const footnote = pages[id]['footnote'];  
+      const body = page[id]['body']; 
+      const footnote = page[id]['footnote'];  
       if (body.includes(searchString)
             || (footnote !== null && footnote.includes(searchString))) {
-            pageDocIds.push(pages[id].document_id); 
+            pageDocIds.push(page[id].document_id); 
       }
     })
     pageDocIds.map((id) => {
-        pageReportIds.push(documents[id].report_id); 
+        pageReportIds.push(document[id].report_id); 
     })
     const allReportIds = [...reportIdList, ...docReportIds, ...pageReportIds]; 
     const _reports = []; 
@@ -186,13 +188,12 @@ const asyncSearch = async (searchString) => {
     return; 
 }
 
-
-
 class UserError extends Error {
-    constructor (code) {
-      this.code = code; 
-    }
+  constructor (code) {
+    this.code = code; 
+  }
 }
+
 const getSearchResults = async (searchString) => {
     try {
         const searchRes = await asyncSearch(searchString); 
