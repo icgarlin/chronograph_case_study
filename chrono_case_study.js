@@ -190,10 +190,14 @@ const search = (searchString, store) => {
       allReportIds = [...pageReportIds]; 
     }
 
-    const _reports = allReportIds.map((id) => {
-      return report[id]; 
-    })
-    return _reports; 
+    if (allReportIds.length) {
+      const _reports = allReportIds.map((id) => {
+        return report[id]; 
+      })
+
+      return _reports; 
+    }
+    return []; 
 }
 console.log(`Search function... `, search(`Lorem`, store)); 
 
