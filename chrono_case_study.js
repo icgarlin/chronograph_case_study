@@ -157,7 +157,7 @@ const search = (searchString, store) => {
       } 
     }); 
     docIds.map((id) => {
-        const name = documents[id]['name']; 
+        const name = document[id]['name']; 
         if (name.includes(searchString)) {
           docReportIds.push(document[id].report_id);  
         }
@@ -180,7 +180,7 @@ const search = (searchString, store) => {
     })
     return _reports; 
 }
-
+console.log(`Search function... `, search(`Nothing`, store)); 
 
 // Function returns a Promise 
 const asyncSearch = async (searchString) => {
