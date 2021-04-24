@@ -144,27 +144,27 @@ console.log('Pages Per Report , ', pagesPerReport(store));
 // O(n) 
 const search = (searchString, store) => {
     const { report, document, page } = store; 
-    const { docIds, pageIds, reportIds } = getIdKeys(report,document,page);
+    const { reportIds, docIds, pageIds } = getIdKeys(report,document,page);
     // Searches report titles 
     const reportIdList = reportIds.filter((id) => {
-      const title = report[id]['title']; 
+      const { title } = report[id];  
       return title.includes(searchString); 
-    })
+    }); 
 
     // Searches document names 
     const docReportIds = docIds.map((id) => {
-      const name = document[id]['name']; 
+      const { name, report_id } = document[id]; 
       if (name.includes(searchString)) {
-        return document[id].report_id;  
+        return report_id;  
       }
     }).filter((id) => id !== undefined); 
 
     // Searches page body and footnote
     const pageReportIds = pageIds.map((id) => {
-      const body = page[id]['body']; 
-      const footnote = page[id]['footnote'];  
-      if (body.includes(searchString) || (footnote !== null && footnote.includes(searchString))) {
-        return page[id].document_id; 
+      const { body, footnote, document_id } = page[id]; 
+      if (body.includes(searchString) 
+          || (footnote !== null && footnote.includes(searchString))) {
+        return document_id; 
       }
     }).map((id) => {
       if (id !== undefined) {
@@ -172,7 +172,7 @@ const search = (searchString, store) => {
       } 
     }).filter((id) => id !== undefined); 
     
-
+    // Builds list of relevant reportIds 
     let allReportIds = []; 
     if (reportIdList.length && docReportIds.length && pageReportIds.length) { 
       allReportIds = [...reportIdList, ...docReportIds, ...pageReportIds]; 
@@ -183,18 +183,18 @@ const search = (searchString, store) => {
     } else if (docReportIds.length && pageReportIds.length) {
       allReportIds = [...docReportIds, ...pageReportIds]; 
     } else if (reportIdList.length) {
-        allReportIds = [...reportIdList]; 
+      allReportIds = [...reportIdList]; 
     } else if (docReportIds.length) {
-        allReportIds = [...docReportIds]; 
+      allReportIds = [...docReportIds]; 
     } else if (pageReportIds.length) {
       allReportIds = [...pageReportIds]; 
     }
 
+    // Builds list of relevant reports 
     if (allReportIds.length) {
       const _reports = allReportIds.map((id) => {
         return report[id]; 
       })
-
       return _reports; 
     }
     return []; 
