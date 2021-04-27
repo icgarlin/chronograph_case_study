@@ -1,6 +1,14 @@
-// import { Client } from 'pg'; 
+const { Pool } = require('pg'); 
 // const client = Client(); 
-// await client.connect()
+// await client.connect(); 
+
+const pool = new Pool({
+ user: 'gyukio',
+ host: 'localhost',
+ database: 'test',
+ port: 5432,
+})
+  
 /* 
     Prompt
 Please write a query to answer each of the following questions. Both accuracy and query performance are critical.
@@ -17,16 +25,20 @@ pages. How would you implement support for this in the schema, and what consider
 // implements as if we were using node-postgres 
 const findDocumentsNoPages = async () => {
   try {
-        const findDocs = `SELECT documents.id AS doc.id
-                          FROM documents AS doc
-                            LEFT JOIN pages AS pgs ON pgs.document_id = doc.id 
-                          WHERE pgs.document_id IS NULL`; 
-        const res = await client.query(findDocs); 
+        const findDocs = `SELECT documents.id 
+                          FROM documents
+                            LEFT JOIN pages AS pgs ON pgs.document_id = documents.id
+                          WHERE pgs.document_id IS NULL;`; 
+        const res = await pool.query(findDocs); 
         return res; 
   } catch (error) {
       return error; 
   }
 }
+
+findDocumentsNoPages()
+.then((res) => console.log('This is our findDocumentsNoPages res ', res))
+.catch((error) => console.log('This is our error ', error)); 
 
 // 2. 
 // Query assumes we want every report
@@ -36,12 +48,17 @@ const listReportTitlesAndPages = async () => {
                                 FROM reports, pages, documents 
                            WHERE documents.report_id = reports.id AND documents.id = pages.document_id 
                            GROUP BY reports.title`
-      const res = await client.query(listReports); 
+      const res = await pool.query(listReports); 
       return res; 
   } catch (error) { 
       return error; 
   }
 }
+
+listReportTitlesAndPages()
+.then((res) => console.log('This is the listReportTitlesAndPages res ', res))
+.catch((error) => console.log('This is our error ', error)); 
+
  
 // 3. 
     /*
@@ -206,6 +223,7 @@ const asyncSearch = async (searchString) => {
     // Ignore body as per instructions 
     return; 
 }
+
 
 class UserError extends Error {
   constructor (code) {
