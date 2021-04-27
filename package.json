@@ -1,0 +1,22 @@
+{
+  "name": "chronograph_case_study",
+  "version": "1.0.0",
+  "description": "chronograph case study April 2021",
+  "main": "chrono_case_study.js",
+  "scripts": {
+    "start": "node chrono_case_study.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/icgarlin/chronograph_case_study.git"
+  },
+  "author": "Isaiah Garlin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/icgarlin/chronograph_case_study/issues"
+  },
+  "homepage": "https://github.com/icgarlin/chronograph_case_study#readme",
+  "dependencies": {
+    "pg": "^8.6.0"
+  }
+}
